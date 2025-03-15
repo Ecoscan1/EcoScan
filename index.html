@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل النفايات - مشروع تخرج طلبة تكنولوجيا المعلومات</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden; /* منع التمرير الأفقي */
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .container {
+            padding: 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .upload-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+        .upload-section:hover {
+            transform: scale(1.02);
+        }
+        .upload-section h2 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .upload-section input[type="file"] {
+            display: none;
+        }
+        .upload-section label {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .upload-section label:hover {
+            background-color: #45a049;
+        }
+        .result-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+        .result-section:hover {
+            transform: scale(1.02);
+        }
+        .result-section h2 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .result-section img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .result-section p {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .result-section .emoji {
+            font-size: 40px;
+            margin-top: 10px;
+        }
+        .tips-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: right;
+            width: 100%;
+        }
+        .tips-section h3 {
+            color: #4CAF50;
+        }
+        .tips-section ul {
+            list-style-type: disc;
+            padding-right: 20px;
+        }
+        .tips-section li {
+            margin-bottom: 10px;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+        }
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+        .gallery {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 800px;
+        }
+        .gallery img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gallery img:hover {
+            transform: scale(1.1);
+        }
+        .info-section, .benefits-section, .how-to-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            text-align: right;
+            cursor: pointer;
+            width: 100%;
+        }
+        .info-section h2, .benefits-section h2, .how-to-section h2 {
+            color: #4CAF50;
+        }
+        .info-section p, .benefits-section ul, .how-to-section ol {
+            font-size: 18px;
+            line-height: 1.6;
+            display: none; /* إخفاء المحتوى بشكل افتراضي */
+        }
+        .info-section.active p, .benefits-section.active ul, .how-to-section.active ol {
+            display: block; /* إظهار المحتوى عند النقر */
+        }
+        .loading-message {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+            font-size: 18px;
+            color: #ff9800;
+            width: 100%;
+        }
+        .instructions {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: right;
+            width: 100%;
+        }
+        .instructions h3 {
+            color: #2196f3;
+        }
+        .instructions ul {
+            list-style-type: disc;
+            padding-right: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .loading-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            margin: 20px 0;
+        }
+        .loading-bar-inner {
+            width: 0;
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .loading-text {
+            font-size: 18px;
+            color: #4CAF50;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>تحليل النفايات - مشروع تخرج طلبة تكنولوجيا المعلومات</h1>
+    </header>
+    <div class="container">
+        <div class="loading-message" id="loading-message">
+            <div class="loading-bar">
+                <div class="loading-bar-inner" id="loading-bar-inner"></div>
+            </div>
+            <div class="loading-text" id="loading-text">جارٍ تحميل النماذج: 0%</div>
+        </div>
+        <div class="upload-section">
+            <h2>تحميل صورة النفايات</h2>
+            <label for="file-upload">اختر صورة</label>
+            <input id="file-upload" type="file" accept="image/*" disabled>
+        </div>
+        <div class="instructions">
+            <h3>تعليمات لتحميل الصورة</h3>
+            <ul>
+                <li>تأكد من أن الصورة واضحة وذات جودة عالية.</li>
+                <li>تجنب الصور المظلمة أو الضبابية.</li>
+                <li>ركز على تصوير النفايات بشكل مباشر.</li>
+                <li>تجنب وجود خلفيات معقدة.</li>
+            </ul>
+        </div>
+        <div class="result-section">
+            <h2>نتيجة التحليل</h2>
+            <img id="result-image" src="" alt="نتيجة الصورة" onerror="this.style.display='none';">
+            <p id="placeholder-text" style="display: none;">لم يتم تحميل أي صورة بعد.</p>
+            <p id="result-text"></p>
+            <div id="result-emoji" class="emoji"></div>
+            <p id="error-message" class="error-message"></p>
+        </div>
+        <div class="tips-section" id="tips-section" style="display: none;">
+            <h3>نصائح لإعادة التدوير</h3>
+            <ul id="tips-list"></ul>
+        </div>
+        <div class="gallery">
+            <h3>أمثلة على النفايات القابلة لإعادة التدوير</h3>
+            <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Ym90dGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=60" alt="زجاجة" onclick="loadExample('bottle')">
+            <img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=60" alt="علبة" onclick="loadExample('can')">
+            <img src="https://images.unsplash.com/photo-1603484477859-abe6a73f9366?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGFwZXJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=60" alt="ورق" onclick="loadExample('paper')">
+            <img src="https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGxhc3RpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=60" alt="بلاستيك" onclick="loadExample('plastic')">
+        </div>
+        <div class="info-section" onclick="toggleSection(this)">
+            <h2>معلومات عن إعادة التدوير</h2>
+            <p>
+                إعادة التدوير هي عملية تحويل النفايات إلى مواد جديدة يمكن استخدامها مرة أخرى. تساعد هذه العملية في تقليل التلوث والحفاظ على الموارد الطبيعية.
+            </p>
+        </div>
+        <div class="benefits-section" onclick="toggleSection(this)">
+            <h2>فوائد إعادة التدوير</h2>
+            <ul>
+                <li>تقليل التلوث البيئي.</li>
+                <li>الحفاظ على الموارد الطبيعية.</li>
+                <li>توفير الطاقة.</li>
+                <li>تقليل كمية النفايات في المكبات.</li>
+            </ul>
+        </div>
+        <div class="how-to-section" onclick="toggleSection(this)">
+            <h2>كيفية إعادة التدوير</h2>
+            <ol>
+                <li>افصل المواد القابلة لإعادة التدوير عن النفايات العضوية.</li>
+                <li>اغسل العلب والزجاجات قبل إعادة تدويرها.</li>
+                <li>استخدم حاويات إعادة التدوير المخصصة لكل نوع من المواد.</li>
+                <li>تأكد من إزالة الأغطية والأجزاء غير القابلة لإعادة التدوير.</li>
+            </ol>
+        </div>
+    </div>
+    <div class="footer">
+        <p>هذا المشروع هو جزء من مشروع تخرج طلبة قسم برمجة بمدرسة تكنولوجيا المعلومات.</p>
+        <p> تم تطويره بواسطة مجموعة طلبة من المدرسة .</p>
+    </div>
+
+    <!-- إضافة TensorFlow.js و MobileNet و COCO-SSD -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+    <script>
+        const fileUpload = document.getElementById('file-upload');
+        const resultImage = document.getElementById('result-image');
+        const resultText = document.getElementById('result-text');
+        const resultEmoji = document.getElementById('result-emoji');
+        const errorMessage = document.getElementById('error-message');
+        const tipsSection = document.getElementById('tips-section');
+        const tipsList = document.getElementById('tips-list');
+        const loadingMessage = document.getElementById('loading-message');
+        const loadingBarInner = document.getElementById('loading-bar-inner');
+        const loadingText = document.getElementById('loading-text');
+
+        let mobilenetModel;
+        let cocoModel;
+
+        // تحميل نموذج MobileNet
+        async function loadMobileNetModel() {
+            try {
+                mobilenetModel = await mobilenet.load();
+                console.log('تم تحميل نموذج MobileNet بنجاح');
+                return true;
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحميل نموذج MobileNet:', error);
+                errorMessage.textContent = 'حدث خطأ أثناء تحميل نموذج MobileNet.';
+                return false;
+            }
+        }
+
+        // تحميل نموذج COCO-SSD
+        async function loadCocoModel() {
+            try {
+                cocoModel = await cocoSsd.load();
+                console.log('تم تحميل نموذج COCO-SSD بنجاح');
+                return true;
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحميل نموذج COCO-SSD:', error);
+                errorMessage.textContent = 'حدث خطأ أثناء تحميل نموذج COCO-SSD.';
+                return false;
+            }
+        }
+
+        // محاكاة تقدم التحميل
+        async function simulateLoading() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                loadingBarInner.style.width = `${progress}%`;
+                loadingText.textContent = `جارٍ تحميل النماذج: ${progress}%`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    loadingMessage.innerHTML = "<p>جارٍ تحميل النماذج، يرجى الانتظار...</p>";
+                }
+            }, 300); // زيادة التقدم كل 300 مللي ثانية
+        }
+
+        // تحميل النماذج بشكل متوازي
+        async function loadModels() {
+            simulateLoading(); // بدء محاكاة التحميل
+
+            try {
+                // تحميل النماذج بشكل متوازي
+                const [mobileNetLoaded, cocoLoaded] = await Promise.all([
+                    loadMobileNetModel(),
+                    loadCocoModel()
+                ]);
+
+                if (mobileNetLoaded && cocoLoaded) {
+                    loadingBarInner.style.width = "100%";
+                    loadingText.textContent = "تم تحميل النماذج بنجاح!";
+                    loadingMessage.innerHTML = "<p>تم تحميل النماذج بنجاح!</p>";
+                    fileUpload.disabled = false; // تمكين زر التحميل بعد اكتمال التحميل
+
+                    // إخفاء رسالة التحميل بعد 3 ثوانٍ
+                    setTimeout(() => {
+                        loadingMessage.style.display = "none";
+                    }, 3000);
+                } else {
+                    loadingMessage.innerHTML = "<p>حدث خطأ أثناء تحميل النماذج.</p>";
+                    errorMessage.textContent = 'حدث خطأ أثناء تحميل النماذج. يرجى إعادة تحميل الصفحة.';
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحميل النماذج:', error);
+                loadingMessage.innerHTML = "<p>حدث خطأ أثناء تحميل النماذج.</p>";
+                errorMessage.textContent = 'حدث خطأ أثناء تحميل النماذج. يرجى إعادة تحميل الصفحة.';
+            }
+        }
+
+        // Handle file upload
+        fileUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (!mobilenetModel || !cocoModel) {
+                    errorMessage.textContent = 'النماذج غير محملة بعد. يرجى الانتظار حتى اكتمال التحميل.';
+                    return;
+                }
+
+                console.log('تم تحميل الصورة:', file.name);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log('تم تحويل الصورة إلى base64');
+                    resultImage.src = e.target.result;
+                    resultImage.style.display = "block"; // عرض الصورة
+                    document.getElementById('placeholder-text').style.display = "none"; // إخفاء النص البديل
+                    analyzeImage(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                console.error('لم يتم تحميل أي ملف.');
+            }
+        });
+
+        // Function to analyze the image using MobileNet و COCO-SSD
+        async function analyzeImage(imageData) {
+            resultText.textContent = "جارٍ تحليل الصورة...";
+            errorMessage.textContent = "";
+            tipsSection.style.display = "none"; // إخفاء قسم النصائح
+            resultEmoji.textContent = ""; // مسح الإيموجي السابق
+
+            const img = new Image();
+            img.src = imageData;
+
+            img.onload = async () => {
+                try {
+                    // تحليل الصورة باستخدام MobileNet
+                    const mobilenetPredictions = await mobilenetModel.classify(img);
+                    console.log('نتائج تحليل MobileNet:', mobilenetPredictions);
+
+                    // تحليل الصورة باستخدام COCO-SSD
+                    const cocoPredictions = await cocoModel.detect(img);
+                    console.log('نتائج تحليل COCO-SSD:', cocoPredictions);
+
+                    // دمج النتائج
+                    const isRecyclable = checkRecyclability(mobilenetPredictions, cocoPredictions);
+
+                    if (isRecyclable) {
+                        resultText.textContent = "هذه النفايات قابلة لإعادة التدوير. ♻️";
+                        resultEmoji.textContent = "♻️";
+                        showRecyclingTips();
+                    } else {
+                        resultText.textContent = "هذه النفايات غير قابلة لإعادة التدوير. 🚫";
+                        resultEmoji.textContent = "🚫";
+                    }
+                } catch (error) {
+                    resultText.textContent = "حدث خطأ أثناء تحليل الصورة.";
+                    errorMessage.textContent = error.message;
+                    console.error('Error:', error);
+                }
+            };
+        }
+
+        // Function to check recyclability based on both models
+        function checkRecyclability(mobilenetPredictions, cocoPredictions) {
+            // قائمة التسميات القابلة لإعادة التدوير
+           const recyclableLabels = [
+    // مواد قابلة لإعادة التدوير
+    'bottle', 'can', 'cup', 'jar', 'box', 'book', 'cell phone',
+    'plastic', 'glass', 'paper', 'metal', 'cardboard', 'aluminum', 'tin',
+    'carton', 'cardboard box', 'paperboard', 'glass bottle', 'plastic bag', 'paper bag',
+    'electronic waste', 'e-waste', 'battery', 'lithium battery', 'lead battery',
+    'oil', 'paint', 'chemical', 'hazardous material', 'toxic waste', 'radioactive waste', 'nuclear waste',
+    'biodegradable waste', 'non-biodegradable waste', 'recyclable', 'non-recyclable',
+
+    // نفايات طبية
+    'medical waste', 'syringe', 'bandage', 'needle', 'hospital waste', 'medical equipment', 'pharmaceutical waste',
+
+    // نفايات البناء
+    'construction waste', 'brick', 'cement', 'wood', 'scrap metal', 'concrete', 'demolition waste', 'roofing material',
+
+    // معادن وكنوز
+    'metal', 'steel', 'iron', 'aluminum', 'copper', 'gold', 'silver', 'jewelry', 'coin', 'treasure', 'precious metal',
+
+    // مواد أخرى
+    'tire', 'rubber', 'ceramic', 'ceramics', 'fabric', 'leather', 'wooden', 'wood', 'plastic bottle', 'glass bottle',
+    'plastic container', 'glass container', 'metal container', 'aluminum foil', 'tin can', 'beverage can', 'soda can',
+    'food can', 'paint can', 'aerosol can', 'spray can', 'chemical container', 'hazardous container', 'toxic container',
+    'radioactive container', 'nuclear container', 'biodegradable container', 'non-biodegradable container',
+
+    // نفايات إلكترونية
+    'electronic device', 'computer', 'laptop', 'smartphone', 'tablet', 'television', 'monitor', 'printer', 'scanner',
+    'keyboard', 'mouse', 'cable', 'wire', 'battery pack', 'power bank', 'charger', 'adapter', 'circuit board', 'motherboard',
+    'hard drive', 'ssd', 'usb drive', 'memory card', 'cd', 'dvd', 'blu-ray', 'cassette', 'vhs', 'floppy disk', 'tape',
+
+    // نفايات منزلية
+    'furniture', 'chair', 'table', 'sofa', 'bed', 'mattress', 'carpet', 'rug', 'curtain', 'blanket', 'pillow', 'clothing',
+    'textile', 'shoe', 'bag', 'backpack', 'wallet', 'belt', 'hat', 'glove', 'scarf', 'towel', 'linen', 'sheet', 'pillowcase',
+
+    // نفايات عضوية
+    'food waste', 'organic waste', 'compost', 'vegetable', 'fruit', 'meat', 'fish', 'dairy', 'bread', 'grain', 'rice', 'pasta',
+    'coffee grounds', 'tea leaves', 'egg shell', 'bone', 'shell', 'peel', 'core', 'seed', 'nut', 'herb', 'spice', 'leftover',
+
+    // نفايات خطرة
+    'hazardous waste', 'toxic waste', 'radioactive waste', 'nuclear waste', 'chemical waste', 'pesticide', 'herbicide', 'fertilizer',
+    'cleaning product', 'detergent', 'bleach', 'ammonia', 'acid', 'base', 'solvent', 'paint thinner', 'gasoline', 'diesel', 'oil',
+    'lubricant', 'grease', 'adhesive', 'glue', 'epoxy', 'resin', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos',
+
+    // نفايات أخرى
+    'toy', 'game', 'puzzle', 'book', 'magazine', 'newspaper', 'catalog', 'brochure', 'flyer', 'poster', 'calendar', 'card',
+    'envelope', 'stationery', 'pen', 'pencil', 'marker', 'highlighter', 'eraser', 'ruler', 'stapler', 'staple', 'paper clip',
+    'binder clip', 'rubber band', 'tape', 'glue stick', 'scissors', 'knife', 'fork', 'spoon', 'plate', 'bowl', 'cup', 'mug',
+    'glass', 'bottle', 'jar', 'can', 'container', 'bag', 'box', 'crate', 'pallet', 'barrel', 'drum', 'tank', 'cylinder', 'tube',
+    'pipe', 'hose', 'wire', 'cable', 'chain', 'rope', 'string', 'cord', 'fabric', 'cloth', 'leather', 'rubber', 'plastic', 'metal',
+    'wood', 'glass', 'ceramic', 'stone', 'concrete', 'brick', 'tile', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal',
+    'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch',
+    'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement',
+    'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle',
+    'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal',
+    'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery',
+    'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle',
+    'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct',
+    'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove',
+    'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine',
+    'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain',
+    'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick',
+    'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting',
+    'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument',
+    'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle',
+    'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game',
+    'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker',
+    'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator',
+    'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner',
+    'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker',
+    'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet',
+    'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone',
+    'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror',
+    'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck',
+    'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket',
+    'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory',
+    'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle',
+    'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump',
+    'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer',
+    'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow',
+    'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick',
+    'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror',
+    'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus',
+    'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone',
+    'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger',
+    'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery',
+    'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan',
+    'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker',
+    'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug',
+    'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay',
+    'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory',
+    'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter',
+    'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure',
+    'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone',
+    'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel',
+    'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven',
+    'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum',
+    'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish',
+    'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration',
+    'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument',
+    'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat',
+    'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller',
+    'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle',
+    'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater',
+    'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker',
+    'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile',
+    'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem',
+    'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance',
+    'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter',
+    'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller',
+    'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch',
+    'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan',
+    'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine',
+    'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish',
+    'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture',
+    'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck',
+    'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure',
+    'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens',
+    'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve',
+    'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher',
+    'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain',
+    'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror',
+    'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade',
+    'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller',
+    'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator',
+    'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer',
+    'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug',
+    'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration',
+    'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle',
+    'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game',
+    'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery',
+    'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster',
+    'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain',
+    'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art',
+    'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter',
+    'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller',
+    'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine',
+    'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker',
+    'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk',
+    'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment',
+    'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite',
+    'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light',
+    'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven',
+    'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain',
+    'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph',
+    'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane',
+    'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker',
+    'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan',
+    'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress',
+    'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art',
+    'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle',
+    'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone',
+    'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan',
+    'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow',
+    'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting',
+    'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane',
+    'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera',
+    'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer',
+    'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile',
+    'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry',
+    'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone',
+    'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch',
+    'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer',
+    'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos',
+    'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement',
+    'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller',
+    'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve',
+    'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress',
+    'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame',
+    'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite',
+    'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery',
+    'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher',
+    'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble',
+    'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle',
+    'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod',
+    'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer',
+    'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos',
+    'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck',
+    'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger',
+    'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner',
+    'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring',
+    'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device',
+    'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game',
+    'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe',
+    'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress',
+    'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock',
+    'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll',
+    'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel',
+    'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop',
+    'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art',
+    'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship',
+    'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch',
+    'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker',
+    'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble',
+    'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle',
+    'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash',
+    'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor',
+    'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel',
+    'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard',
+    'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens',
+    'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder',
+    'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone',
+    'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard',
+    'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod',
+    'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer',
+    'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock',
+    'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane',
+    'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight',
+    'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum',
+    'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame',
+    'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle',
+    'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump',
+    'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper',
+    'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car',
+    'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone',
+    'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle',
+    'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel',
+    'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite',
+    'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam',
+    'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain',
+    'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument',
+    'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone',
+    'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder',
+    'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble',
+    'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine',
+    'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine',
+    'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow',
+    'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device',
+    'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat', 'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter',
+    'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel', 'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster',
+    'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow', 'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil',
+    'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'art', 'sculpture', 'painting', 'photograph', 'frame', 'mirror', 'clock', 'watch', 'jewelry', 'accessory', 'tool', 'equipment', 'machine', 'device', 'appliance', 'gadget', 'instrument', 'utensil', 'implement', 'vehicle', 'car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'skateboard', 'rollerblade', 'toy vehicle', 'model vehicle', 'airplane', 'helicopter', 'boat',
+    'ship', 'submarine', 'rocket', 'satellite', 'drone', 'robot', 'doll', 'action figure', 'stuffed animal', 'puzzle', 'game', 'card game', 'board game', 'video game', 'console', 'controller', 'accessory', 'cable', 'adapter', 'charger', 'battery', 'headphone', 'earphone', 'speaker', 'microphone', 'camera', 'lens', 'tripod', 'flash', 'light', 'bulb', 'lamp', 'lantern', 'candle', 'torch', 'flashlight', 'battery', 'power bank', 'generator', 'solar panel',
+    'wind turbine', 'water wheel', 'dam', 'reservoir', 'aqueduct', 'pipe', 'hose', 'valve', 'pump', 'filter', 'heater', 'cooler', 'fan', 'air conditioner', 'refrigerator', 'freezer', 'oven', 'stove', 'microwave', 'toaster', 'blender', 'mixer', 'grinder', 'processor', 'juicer', 'kettle', 'coffee maker', 'tea maker', 'dishwasher', 'washing machine', 'dryer', 'iron', 'vacuum', 'mop', 'broom', 'brush', 'sponge', 'cloth', 'towel', 'rag', 'mattress', 'pillow',
+    'blanket', 'sheet', 'curtain', 'rug', 'carpet', 'tile', 'flooring', 'wallpaper', 'paint', 'varnish', 'stain', 'sealant', 'caulk', 'insulation', 'asbestos', 'concrete', 'brick', 'stone', 'gravel', 'sand', 'soil', 'clay', 'rock', 'pebble', 'crystal', 'gem', 'jewel', 'ornament', 'decoration', 'ornament', 'decoration'
+            ];
+
+            // تحقق من نتائج MobileNet
+            const isMobileNetRecyclable = mobilenetPredictions.some(prediction => 
+                recyclableLabels.includes(prediction.className.toLowerCase())
+            );
+
+            // تحقق من نتائج COCO-SSD
+            const isCocoRecyclable = cocoPredictions.some(prediction => 
+                recyclableLabels.includes(prediction.class.toLowerCase())
+            );
+
+            // إذا كان أي من النموذجين يعتبر النفايات قابلة لإعادة التدوير
+            return isMobileNetRecyclable || isCocoRecyclable;
+        }
+
+        // Function to show recycling tips
+        function showRecyclingTips() {
+            tipsList.innerHTML = `
+                <li>افصل المواد القابلة لإعادة التدوير عن النفايات العضوية.</li>
+                <li>اغسل العلب والزجاجات قبل إعادة تدويرها.</li>
+                <li>استخدم حاويات إعادة التدوير المخصصة لكل نوع من المواد.</li>
+                <li>تأكد من إزالة الأغطية والأجزاء غير القابلة لإعادة التدوير.</li>
+            `;
+            tipsSection.style.display = "block"; // إظهار قسم النصائح
+        }
+
+        // Function to load example images
+        function loadExample(type) {
+            let imageUrl = '';
+            switch (type) {
+                case 'bottle':
+                    imageUrl = 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Ym90dGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=60';
+                    break;
+                case 'can':
+                    imageUrl = 'https://images.unsplash.com/photo-1612817288484-6f916006741a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FufGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=60';
+                    break;
+                case 'paper':
+                    imageUrl = 'https://images.unsplash.com/photo-1603484477859-abe6a73f9366?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGFwZXJ8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=60';
+                    break;
+                case 'plastic':
+                    imageUrl = 'https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGxhc3RpY3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500&q=60';
+                    break;
+            }
+            resultImage.src = imageUrl;
+            resultImage.style.display = "block"; // عرض الصورة
+            document.getElementById('placeholder-text').style.display = "none"; // إخفاء النص البديل
+            analyzeImage(imageUrl);
+        }
+
+        // Function to toggle sections
+        function toggleSection(section) {
+            section.classList.toggle('active');
+        }
+
+        // تحميل النماذج عند بدء التشغيل
+        loadModels();
+    </script>
+</body>
+</html>
